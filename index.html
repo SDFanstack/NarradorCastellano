@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Narrador de cuentos</title>
+<style>
+  :root { --bg:#fbf6ee; --card:#fff; --ink:#2b2433; --muted:#6d6577; --acc:#7a4fd1; --line:#e6dcef; --err:#b3261e; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#17131d; --card:#211b2b; --ink:#f1eaf8; --muted:#a79bb8; --acc:#a98bf0; --line:#38304a; --err:#ff8a80; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.5 system-ui, sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 20px 16px 48px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 18px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:14px; }
+  label { display:block; font-weight:600; margin:12px 0 4px; }
+  label:first-child { margin-top:0; }
+  textarea, input, select { width:100%; padding:10px; border:1px solid var(--line); border-radius:10px; background:transparent; color:inherit; font:inherit; }
+  textarea { min-height: 240px; resize: vertical; }
+  .fila { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:14px; }
+  button, .btn { background:var(--acc); color:#fff; border:0; border-radius:10px; padding:11px 18px; font:inherit; font-weight:600; cursor:pointer; text-decoration:none; display:inline-block; }
+  button.sec { background:transparent; color:var(--acc); border:1px solid var(--acc); }
+  button:disabled { opacity:.5; cursor:default; }
+  .nota { color:var(--muted); font-size:.9rem; margin-top:4px; }
+  #estado { margin-top:12px; min-height:1.4em; }
+  #estado.error { color:var(--err); font-weight:600; }
+  audio { width:100%; margin-top:6px; }
+  details summary { cursor:pointer; font-weight:600; }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body>
+<main>
+  <h1>🎙️ Narrador de cuentos</h1>
+  <p class="sub">Voz en castellano de España, con énfasis y emoción.</p>
+
+  <section class="card">
+    <label for="titulo">Título (para el nombre del archivo)</label>
+    <input id="titulo" placeholder="El zorrito y la luna">
+
+    <label for="texto">Texto del cuento</label>
+    <textarea id="texto" placeholder="Pega aquí el cuento…"></textarea>
+    <div class="nota"><span id="chars">0</span> caracteres</div>
+
+    <label for="voz">Voz</label>
+    <select id="voz"></select>
+
+    <label for="estilo">Cómo lo cuenta</label>
+    <select id="estilo">
+      <option value="tierno">Cuento tierno</option>
+      <option value="aventura">Aventura con emoción</option>
+      <option value="misterio">Misterio</option>
+      <option value="alegre">Alegre y juguetón</option>
+      <option value="personalizado">Personalizado…</option>
+    </select>
+    <div id="libreBox" hidden>
+      <label for="estiloLibre">Descríbelo con tus palabras</label>
+      <input id="estiloLibre" placeholder="Voz de abuela contando un cuento junto a la chimenea, muy dulce y con pausas">
+      <div class="nota">Puedes escribirlo en español o en inglés.</div>
+    </div>
+
+    <label for="ritmo">Ritmo</label>
+    <select id="ritmo">
+      <option value="normal">Normal</option>
+      <option value="pausado" selected>Pausado</option>
+      <option value="muy">Muy pausado</option>
+    </select>
+    <div class="nota">Si va rápido, prueba "Muy pausado". También ayuda poner comas, puntos y párrafos cortos en el texto.</div>
+
+    <div class="fila">
+      <button id="probar" class="sec">Probar la voz (frase corta)</button>
+      <button id="generar">Narrar el cuento</button>
+      <button id="cancelar" class="sec" hidden>Cancelar</button>
+    </div>
+    <div id="estado" role="status"></div>
+
+    <div id="resultado" hidden>
+      <audio id="reproductor" controls></audio>
+      <div class="fila"><a id="descargar" class="btn" href="#" download>⬇ Descargar audio (WAV)</a></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <details>
+      <summary>Ajustes</summary>
+      <label for="clave">Clave de API de Gemini</label>
+      <input id="clave" type="password" autocomplete="off" placeholder="Solo si NO usas el proxy">
+      <div class="nota">Con el proxy no hace falta: la clave está guardada en el servidor.</div>
+
+      <label for="max">Máximo de caracteres por petición</label>
+      <input id="max" type="number" value="8000" min="1000" step="500">
+      <div class="nota">Si el cuento cabe, se narra en <b>una sola petición</b>. Solo se trocea si lo supera.</div>
+
+      <label for="proxy">Dirección del proxy (opcional)</label>
+      <input id="proxy" placeholder="https://narrador.tu-usuario.workers.dev">
+      <div class="nota">La dirección del Worker de Cloudflare (mira worker.js).</div>
+
+      <label for="pass">Contraseña de la familia</label>
+      <input id="pass" type="password" autocomplete="off" placeholder="La que pongas en el Worker">
+      <div class="nota">Evita que otras personas usen tu cuota si encuentran el enlace.</div>
+    </details>
+    <p class="nota" style="margin-top:14px">Peticiones de hoy en este navegador: <b id="contador">0</b>. La cuota gratuita suele rondar las 10 al día y 3 por minuto; compruébala en AI Studio.</p>
+  </section>
+</main>
+<script src="app.js"></script>
+</body>
+</html>

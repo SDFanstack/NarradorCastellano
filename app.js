@@ -7,7 +7,7 @@ const ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/interactions"
 const PAUSA_ENTRE_TROZOS_S = 21; // límite gratuito observado: 3 peticiones/minuto
 const SILENCIO_ENTRE_TROZOS_S = 0.35;
 // Pon aquí la dirección de tu Worker para que venga rellena (ej. "https://narrador.tu-usuario.workers.dev")
-const PROXY_POR_DEFECTO = "";
+const PROXY_POR_DEFECTO = "narrador.sdfanstack.workers.dev";
 
 const VOICES = [
   ["es-es-podcaster-5", "Podcaster 5 · mujer, de radio, con chispa"],

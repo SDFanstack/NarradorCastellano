@@ -334,7 +334,7 @@ if (typeof document !== "undefined") {
       $("voz").appendChild(o);
     });
     $("clave").value = leer("tts_clave") || "";
-    $("proxy").value = leer("tts_proxy") || narrador.sdfanstack.workers.dev;
+    $("proxy").value = leer("tts_proxy") || PROXY_POR_DEFECTO;
     $("pass").value = leer("tts_pass") || "";
     if (leer("tts_voz")) $("voz").value = leer("tts_voz");
     if (leer("tts_estilo")) $("estilo").value = leer("tts_estilo");

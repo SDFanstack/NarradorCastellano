@@ -1,5 +1,5 @@
 // Narrador de cuentos — Gemini TTS en castellano
-// Un cuento = una petición (la cuota gratuita es de unas 10 peticiones al día).
+// Un cuento = una petición.
 // Solo se trocea el texto si supera el máximo de caracteres por petición.
 
 const MODEL = "gemini-3.8-flash-tts";
@@ -202,19 +202,6 @@ if (typeof document !== "undefined") {
   let cancelar = false;
   let urlAudio = null;
 
-  function contadorHoy() {
-    const d = new Date().toISOString().slice(0, 10);
-    return { clave: "tts_n_" + d, n: parseInt(leer("tts_n_" + d) || "0", 10) };
-  }
-  function pintarContador() {
-    $("contador").textContent = contadorHoy().n;
-  }
-  function sumarPeticion() {
-    const c = contadorHoy();
-    guardar(c.clave, String(c.n + 1));
-    pintarContador();
-  }
-
   function estado(msg, error) {
     const e = $("estado");
     e.textContent = msg;
@@ -241,7 +228,6 @@ if (typeof document !== "undefined") {
     if (!proxy) headers["x-goog-api-key"] = clave;
     else if (document.getElementById("pass").value) headers["X-Familia"] = document.getElementById("pass").value;
 
-    sumarPeticion();
     let r;
     try {
       r = await fetch(proxy || ENDPOINT, { method: "POST", headers, body: JSON.stringify(body) });
@@ -277,7 +263,7 @@ if (typeof document !== "undefined") {
     if (trozos.length > 1) {
       const ok = confirm(
         `Este texto es largo y se enviará en ${trozos.length} peticiones. ` +
-        `Cada una gasta una de tus ~10 peticiones gratis del día y tarda ~${PAUSA_ENTRE_TROZOS_S}s de espera entre ellas. ¿Seguimos?`
+        `Se esperan ~${PAUSA_ENTRE_TROZOS_S}s entre una y otra, así que tardará un poco. ¿Seguimos?`
       );
       if (!ok) return;
     }
@@ -352,6 +338,5 @@ if (typeof document !== "undefined") {
     $("generar").addEventListener("click", () => generar($("texto").value, false));
     $("probar").addEventListener("click", () => generar($("texto").value || "Había una vez, en un bosque muy lejano, un zorrito que soñaba con tocar la luna.", true));
     $("cancelar").addEventListener("click", () => (cancelar = true));
-    pintarContador();
   });
 }
